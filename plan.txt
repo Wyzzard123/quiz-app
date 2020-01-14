@@ -1,0 +1,42 @@
+Value Proposition: 
+- Create a WebApp where you can create quizzes for yourself and generate endless questions
+
+Author: Wyz Kim-Chan
+
+Things I need to create a quiz app:
+
+Programmatic Proof of Concept:
+
+1. Question-Answer Bank
+a. This should map questions to answers and topics
+b. This should ideally separate questions by topics
+c. This should be persistent data somewhere
+
+2. Question Generator:
+a. This should randomly generate a question from the Question-Answer Bank 
+b. This should give you four choices from the answers in the Question-Answer Bank 
+-- One of these answers will be the correct one according to the Question-Answer Bank 
+-- The others will be random 
+-- These will be randomly mapped to 'A', 'B', 'C' and 'D'
+-- Each will be mapped as a tuple (A, [answer], right/wrong)
+
+3. Quiz Generator: 
+a. This will call the Question Generator and:
+-- Ask you a question
+-- Give you 4 choices 
+-- Allow for answer input
+-- Tell you if the answer is right or wrong
+-- Tell you the correct answer.
+
+ 
+
+
+End Product:
+1. Web Form to add questions and answers
+2. Web form to edit questions and answers
+3. Different kinds of questions
+4. A page that tells you what you got right and wrong
+5. Score Count
+6. User Accounts
+
+
