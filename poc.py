@@ -203,9 +203,52 @@ def generate_mapped_questions_from_file(topic="usa", infile='question_answer_ban
 
 # input_questions()
 
-list_of_mapped_qna = generate_mapped_questions_from_file(topic="malaysia")
+# list_of_mapped_qna = generate_mapped_questions_from_file(topic="malaysia")
 
-for item in list_of_mapped_qna:
-    print(item)
+# for item in list_of_mapped_qna:
+#     print(item)
 
-print_questions(list_of_mapped_qna)
+# print_questions(list_of_mapped_qna)
+
+def generate_quiz(list_of_mapped_qna):
+    """Generates a quiz that takes user input for answers. The questions take the list_of_mapped_qna output from the generate_mapped_questions_from_file function as input. Similar to the print_questions function, but with pauses to allow for user input. Returns a score."""
+    
+    max_score = len(list_of_mapped_qna)
+    score = 0
+    
+    for index, choices_dict in enumerate(list_of_mapped_qna):
+        # The correct answer is the answer where correctorwrong is "correct"
+        correct_answer = ""
+        
+        # choices are the choices n the question.
+        set_of_choices = set()
+        for choice, value in choices_dict.items():
+            if choice == "question":
+                print(f"\nQuestion {index + 1}: {choices_dict['question']}")
+            else:
+                print(f"{choice}: {value.answer}")
+                set_of_choices.update([choice])
+                if value.correctorwrong == 'correct':
+                    correct_answer = choice
+        
+        given_answer = input("Type your answer here:\n")
+        while given_answer not in set_of_choices:
+            given_answer = input("Type your answer here FROM THE CHOICES (letters):\n")
+        if given_answer.lower() == correct_answer.lower():
+            print("Correct!")
+            score += 1
+        else:
+            print(f"Wrong! The answer was {correct_answer}!")
+    print(f"Your final score was {score} / {max_score}")
+    return score
+        
+# list_of_mapped_qna = generate_mapped_questions_from_file(topic="usa")
+# generate_quiz(list_of_mapped_qna)                  
+
+def instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
+    """Generate an instant quiz from a file"""
+    list_of_mapped_qna = generate_mapped_questions_from_file(topic, infile, no_of_questions, no_of_choices)
+    score = generate_quiz(list_of_mapped_qna)
+    return score
+
+instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
