@@ -8,7 +8,7 @@ import random
 def store_json(question_answer_bank, outfile_json='question_answer_bank.json'):
     """Stores the question answer bank as a JSON file."""
 
-    # This will overwrite the JSON file. Make sure that the make_questions function takes the output of get_questions first.
+    # This will overwrite the JSON file. Make sure that the input_questions function takes the output of get_questions first.
     with open(outfile_json, "w") as outfile:
         json.dump(question_answer_bank, outfile)
 
@@ -28,8 +28,8 @@ def get_questions(infile='question_answer_bank.json'):
                 question_answer_bank[topic].append(question_answer_tuple)
     return question_answer_bank
 
-def make_questions():
-    """A simple function that takes questions and adds them to the question_answer_bank. This separates questions and answers by topic.
+def input_questions():
+    """A simple function that takes user input for questions and adds the questions to the question_answer_bank. This separates questions and answers by topic.
     For the actual app, this will be done through a webform, and questions which were added previously
     will persist."""
     # User will input questions and answers. User may type "quit" at any time to break out of the loop.
@@ -92,13 +92,13 @@ def print_questions(question_answer_bank, startstring="", endstring=""):
 # initial_question_answer_bank = get_questions()
 # print_questions(initial_question_answer_bank, "New list")
 
-# question_answer_bank = make_questions()
+# question_answer_bank = input_questions()
 
 # print_questions(question_answer_bank)
 
 #########Section 2: Generate Random Questions#######################################
 
-def generate_qna_from_file(infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4, topic="usa"):
+def generate_qna_from_file(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
     """Generates a list of MCQ questions from the question_answer_bank JSON file for a particular topic and no_of_questions. The number of choices is set to 4 by default."""
     question_answer_bank = get_questions(infile)
     qna_bank_topic = question_answer_bank[topic]
@@ -185,10 +185,10 @@ def map_to_choice(QNC_tuple):
 # # print(random_questions)
 # print(map_to_choice(random_questions[0]))
 
-def generate_mapped_questions_from_file(infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4, topic="usa"):
+def generate_mapped_questions_from_file(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
     """Generates a full list of questions and choices from a json file. Takes as parameters the file where the questions and answers are stored (JSON), the number of questions, the number of choices per question, and the topic.""" 
 
-    list_of_qnc = generate_qna_from_file(infile, no_of_questions, no_of_choices, topic)
+    list_of_qnc = generate_qna_from_file(topic, infile, no_of_questions, no_of_choices)
 
     # This is a list of the QnA to later be called by index number.
     list_of_mapped_qna = []
@@ -201,7 +201,9 @@ def generate_mapped_questions_from_file(infile='question_answer_bank.json', no_o
 
 ## Use this to test mapped_questions functionality
 
-list_of_mapped_qna = generate_mapped_questions_from_file()
+# input_questions()
+
+list_of_mapped_qna = generate_mapped_questions_from_file(topic="malaysia")
 
 for item in list_of_mapped_qna:
     print(item)
