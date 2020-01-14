@@ -72,13 +72,23 @@ def print_questions(question_answer_bank, startstring="", endstring=""):
                 print(f"Answer: {QA_tuple.answer}")
                 print("")
     elif type(question_answer_bank) == list:
-        for QA_tuple in question_answer_bank:
-            print(f"Question: {QA_tuple.question}")
-            print(f"Answer: {QA_tuple.answer}")
-            print("")
+        try:
+            for QA_tuple in question_answer_bank:
+                print(f"Question: {QA_tuple.question}")
+                print(f"Answer: {QA_tuple.answer}")
+                print("")
+        except AttributeError:
+            # Try this for when a list of mapped QnA with choices is added
+            for index, choices_dict in enumerate(question_answer_bank):
+                for choice, value in choices_dict.items():
+                    if choice == "question":
+                        print(f"\nQuestion {index + 1}: {choices_dict['question']}")
+                    else:
+                        print(f"{choice}: {value.answer}")
+                    
     print(endstring)
 
-## Uncomment to test Code in first section
+## Uncomment to test Code to create questions and answers
 # initial_question_answer_bank = get_questions()
 # print_questions(initial_question_answer_bank, "New list")
 
@@ -97,7 +107,11 @@ def generate_qna_from_file(infile='question_answer_bank.json', no_of_questions=5
     if no_of_questions > len(qna_bank_topic):
         no_of_questions = len(qna_bank_topic)
 
-    list_of_qna = []
+    # To be returned
+    list_of_qnc = []
+
+    # To keep track of to ensure we do not get the same question repeated
+    list_of_qa_tuples = []
 
     # Create a set of answers to generate choices from
     set_of_answers = set(QA_tuple.answer for QA_tuple in qna_bank_topic)
@@ -111,8 +125,10 @@ def generate_qna_from_file(infile='question_answer_bank.json', no_of_questions=5
     
     for no in range(no_of_questions):
         # Add a random QA tuple to the list of questions. The while loop checks that the QA tuple has not already been inserted.
-        while (random_QA := random.choice(qna_bank_topic)) in list_of_qna:
+        while (random_QA := random.choice(qna_bank_topic)) in list_of_qa_tuples:
             random_QA = random.choice(qna_bank_topic)
+        list_of_qa_tuples.append(random_QA)
+        
         # Create a named tuple with the question, answer, and a list of wrong choices
         QNC = namedtuple("QNC", 'question answer incorrect_choices')
         # Correct choice is index 0.
@@ -129,14 +145,65 @@ def generate_qna_from_file(infile='question_answer_bank.json', no_of_questions=5
 
     
         new_QNC = QNC(question=random_QA.question, answer=random_QA.answer, incorrect_choices = incorrect_choices)
-        list_of_qna.append(new_QNC)
+        list_of_qnc.append(new_QNC)
     
-    return list_of_qna
+    return list_of_qnc
    
-## Uncomment to test Code in second section
+## Uncomment to test generate_qna_from_file()
 # random_questions = generate_qna_from_file()
 # print_questions(random_questions)
 # print(random_questions)
 
 
 #########Section 3: Generate a Quiz from the list#######################################
+
+def map_to_choice(QNC_tuple):
+    """This maps a question to A, B, C, D, using QNC (Question and Choices) Tuple output from the generate_qna_from_file function. Returns a dictionary with A, B, C, D as the keys and choices as the values. The values are tuples which contain a correctorwrong answer, which will be 'correct' for the right answer or 'wrong' for the wrong choices. The question is also a key value pair."""
+    question, answer, incorrect_choices = QNC_tuple
+    
+    # Make a named tuple showing whether something is correct or wrong
+    CorW = namedtuple("CorW", "answer correctorwrong")
+    right_answer = CorW(answer=answer, correctorwrong="correct")
+    choices = [right_answer] 
+    for incorrect_choice in incorrect_choices:
+        wrong_answer = CorW(answer=incorrect_choice, correctorwrong="wrong")
+        choices.append(wrong_answer)
+    
+    # Shuffle the Choices list in place
+    random.shuffle(choices)
+    choices_dict = {}
+    choices_dict['question'] = question
+
+    ascii_A_no = ord("A")
+    for index, choice in enumerate(choices):
+        letter = chr(ascii_A_no + index)
+        choices_dict[letter] = choice
+    return choices_dict
+
+## Uncomment to test map_to_choice functionality
+# random_questions = generate_qna_from_file()
+# # print(random_questions)
+# print(map_to_choice(random_questions[0]))
+
+def generate_mapped_questions_from_file(infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4, topic="usa"):
+    """Generates a full list of questions and choices from a json file. Takes as parameters the file where the questions and answers are stored (JSON), the number of questions, the number of choices per question, and the topic.""" 
+
+    list_of_qnc = generate_qna_from_file(infile, no_of_questions, no_of_choices, topic)
+
+    # This is a list of the QnA to later be called by index number.
+    list_of_mapped_qna = []
+
+    for QNC_tuple in list_of_qnc:
+        choices_dict = map_to_choice(QNC_tuple)
+        list_of_mapped_qna.append(choices_dict)
+
+    return list_of_mapped_qna
+
+## Use this to test mapped_questions functionality
+
+list_of_mapped_qna = generate_mapped_questions_from_file()
+
+for item in list_of_mapped_qna:
+    print(item)
+
+print_questions(list_of_mapped_qna)
