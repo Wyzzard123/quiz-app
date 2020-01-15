@@ -23,7 +23,10 @@
                 
             {% endfor %}
             
-            <br>
+            Score: {{no_of_correct_answers}} / {{no_of_questions}} 
+            <br><br>
+            Percentage: {{ percentage_score }} %
+            <br><br>
             <input type="submit" name="quiz_regenerate_button" value="New Quiz">
         </ol>
     </form>

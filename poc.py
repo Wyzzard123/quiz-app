@@ -252,3 +252,43 @@ def instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_question
 
 # # Uncomment to test out quiz capabilities
 # instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
+
+
+####### Added while making Flask app. To take a temp QnA bank which was randomly generated and to map the questions to the correct answers. #################################
+def correct_answers_from_json(infile='temporary_question_answer_bank.json'):
+    """Creates a list of tuples from a temporary mapped JSON with the questions and the correct answer choices.""" 
+
+    with open(infile) as json_file:
+        json_mapped_questions = json.load(json_file)
+    
+    list_of_q_and_correct_a = []
+
+    #QNCA is Question and Correct Answer
+    QNCA = namedtuple("QNCA", 'question correct_a')
+
+    for QNC in json_mapped_questions:
+        question = QNC["question"]
+        correct_answer = ""
+        for choice, answer in QNC.items():
+            if choice == "question":
+                continue
+            elif answer[1] == "wrong":
+                continue
+            elif answer[1] == "correct":
+                correct_answer = choice
+        q_and_correct_a = QNCA(question=question, correct_a=correct_answer)
+        
+        list_of_q_and_correct_a.append(q_and_correct_a)
+    
+    return list_of_q_and_correct_a
+
+## Uncomment to test remapping to correct answer choice/letter
+# print(correct_answers_from_json())
+
+def reload_questions_from_json(infile = 'temporary_question_answer_bank.json'):
+    """Reloads a temporary mapped JSON to recreate an HTML page with the same questions (after submission)."""
+
+    with open(infile) as json_file:
+        json_mapped_questions = json.load(json_file)
+
+    return json_mapped_questions
