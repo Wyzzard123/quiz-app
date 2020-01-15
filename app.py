@@ -10,7 +10,7 @@ def index():
 @app.route('/quiz', methods = ['GET', 'POST'])
 def quiz():
     if request.method == 'GET':
-        mapped_questions = generate_mapped_questions_from_file(topic="usa", infile="question_answer_bank.json", no_of_questions=6, no_of_choices=4)
+        mapped_questions = generate_mapped_questions_from_file(topic="nature", infile="question_answer_bank.json", no_of_questions=6, no_of_choices=4)
         print(mapped_questions)
         
         temp_json_file = "temporary_question_answer_bank.json"

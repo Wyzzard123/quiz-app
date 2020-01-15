@@ -96,7 +96,7 @@ def print_questions(question_answer_bank, startstring="", endstring=""):
 
 #########Section 2: Generate Random Questions#######################################
 
-def generate_qna_from_file(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
+def generate_qna_from_file(topic="nature", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
     """Generates a list of MCQ questions from the question_answer_bank JSON file for a particular topic and no_of_questions. The number of choices is set to 4 by default."""
     question_answer_bank = get_questions(infile)
     qna_bank_topic = question_answer_bank[topic]
@@ -183,7 +183,7 @@ def map_to_choice(QNC_tuple):
 # # print(random_questions)
 # print(map_to_choice(random_questions[0]))
 
-def generate_mapped_questions_from_file(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
+def generate_mapped_questions_from_file(topic="nature", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
     """Generates a full list of questions and choices from a json file. Takes as parameters the file where the questions and answers are stored (JSON), the number of questions, the number of choices per question, and the topic.""" 
 
     list_of_qnc = generate_qna_from_file(topic, infile, no_of_questions, no_of_choices)
@@ -240,18 +240,18 @@ def generate_quiz(list_of_mapped_qna):
     print(f"Your final score was {score} / {max_score}")
     return score
         
-# list_of_mapped_qna = generate_mapped_questions_from_file(topic="usa")
+# list_of_mapped_qna = generate_mapped_questions_from_file(topic="nature")
 # generate_quiz(list_of_mapped_qna)                  
 
-def instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
+def instant_quiz(topic="nature", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4):
     """Generate an instant quiz from a file"""
     list_of_mapped_qna = generate_mapped_questions_from_file(topic, infile, no_of_questions, no_of_choices)
     score = generate_quiz(list_of_mapped_qna)
     return score
 
 
-# # Uncomment to test out quiz capabilities
-# instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
+# Uncomment to test out quiz capabilities
+# instant_quiz(topic="nature", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
 
 
 ####### Added while making Flask app. To take a temp QnA bank which was randomly generated and to map the questions to the correct answers. #################################
