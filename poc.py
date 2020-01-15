@@ -53,8 +53,6 @@ def input_questions():
         QA = namedtuple('QA', 'question answer')
         question_answer_tuple = QA(question = question, answer = answer)
         question_answer_bank[topic].append(question_answer_tuple)
-    # Convert back to an ordinary dictionary for storage as a JSON
-    question_answer_bank_dict = dict(question_answer_bank)
     
     # Stores the data as a JSON file so it can persist.
     store_json(question_answer_bank)
