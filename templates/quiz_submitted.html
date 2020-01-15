@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Wyz's Quiz App</title>
+</head>
+<body>
+<h1>Random Quiz Generator</h1>
+    <form action='/quiz' method='GET'>
+        <ol>
+            {% for mapped_question in mapped_questions %}
+                <li>Question: {{mapped_question['question']}}</li>
+
+                {% for choice in mapped_question %}
+                    {% if choice != "question" %}
+                        {{choice}}: {{mapped_question[choice][0]}}
+                        <br>
+                    {% endif %}
+                {% endfor %}
+                Your Answer: {{chosen_answers_list[loop.index0]}}<br>
+                Correct Answer: {{correct_answers[loop.index0].correct_a}}<br>
+                {{correct_or_wrong_list[loop.index0]}}<br><br>
+                
+            {% endfor %}
+            
+            <br>
+            <input type="submit" name="quiz_regenerate_button" value="New Quiz">
+        </ol>
+    </form>
+</body>
+
+</html>
