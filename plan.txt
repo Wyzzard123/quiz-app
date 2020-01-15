@@ -3,6 +3,25 @@ Value Proposition:
 
 Author: Wyz Kim-Chan
 
+Things to program:
+
+1. Web form to add questions and answers
+
+
+0. Database to store questions and answers
+1. Web Form to add questions and answers
+2. Web form to edit questions and answers
+3. Different kinds of questions
+4. A page that tells you what you got right and wrong
+5. Score Count (DONE with poc)
+6. User Accounts
+
+
+
+
+
+
+-----DONE on 14/1/2020-----
 Things I need to create a quiz app:
 
 Programmatic Proof of Concept:
@@ -38,5 +57,6 @@ End Product:
 4. A page that tells you what you got right and wrong
 5. Score Count
 6. User Accounts
+7. Design
 
 

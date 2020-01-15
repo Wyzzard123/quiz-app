@@ -249,4 +249,6 @@ def instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_question
     score = generate_quiz(list_of_mapped_qna)
     return score
 
-instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
+
+# # Uncomment to test out quiz capabilities
+# instant_quiz(topic="usa", infile='question_answer_bank.json', no_of_questions=5, no_of_choices=4)
