@@ -9,7 +9,7 @@
     <form action='/quiz' method='GET'>
         <ol>
             {% for mapped_question in mapped_questions %}
-                <li>Question: {{mapped_question['question']}}</li>
+                <li>{{mapped_question['question']}}</li>
 
                 {% for choice in mapped_question %}
                     {% if choice != "question" %}
@@ -33,6 +33,10 @@
     <br><br>
     <form action='/quiz_settings' method='GET'>
         <input type="submit" name="new_settings" value="Quiz Settings">
+    </form>
+    <br><br>
+    <form action='/quiz_add_questions' method='GET'>
+        <input type="submit" name="add_questions" value="Add Questions">
     </form>
 </body>
 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Wyz's Quiz App</title>
+</head>
+<body>
+<h1>Add New Question</h1>
+    <form action='/quiz_add_questions' method='POST'>
+        
+        <label>
+            Topic
+        </label>
+        <br>
+        <select name="topic" required onchange="showNewTopic(this)">
+            <option value="" selected disabled hidden>Select a Topic</option>
+            <option value="NEW_TOPIC">Create a New Topic</option>
+            {% for topic in topics %}
+                <option value={{topic}}>{{topic | upper}}</option>
+            {% endfor %}
+        </select>
+        
+        <div id="newtopic" style="display: none;">
+            <br>
+            <label>Create a New Topic</label>
+            <br>
+            <input type="text" id="add_new_topic" name="add_new_topic">
+        </div>
+        <div id = "new_qna">
+            <br>
+            <label>
+                New Question
+            </label>
+            <br>
+            <input type="text" name="new_question" placeholder ="New Question" required>
+            <br><br>
+            <label>
+                New Answer
+            </label>
+            <br>
+            <input type="text" name = "new_answer" placeholder="New Answer" required>
+            
+        </div>
+        <!-- <span id="add_here"></span> -->
+        <br>
+        <!-- <input type="button" id="clone" onclick="add()" value="More Questions"></input button>
+        <br><br> -->
+
+        <input type="submit" name="add_new_questions" value="Create Question">
+    </form>
+    <br>
+    <form action='/quiz_settings' method='GET'>
+        <input type="submit" name="new_settings" value="Quiz Settings">
+    </form>
+    <br>
+    <form action='/quiz' method='GET'>
+        <input type="submit" name="generate_new_quiz_button" value="New Quiz (Last Used Settings)">
+    </form>
+    
+    <br>
+    Successfully Added a Question!<br><br>
+    Topic: {{new_topic | upper}}<br>
+    Question: {{new_question}}<br>
+    Answer: {{new_answer}}
+
+    <script>
+    function showNewTopic(that) {
+        if (that.value == "NEW_TOPIC") {
+            document.getElementById("newtopic").style.display="block";
+        } else {
+            document.getElementById("newtopic").style.display="none";
+        }
+    }
+    var i = 0;
+    var original = document.getElementById("new_qna")
+
+    // function add() {
+    //     //Create more new question spaces
+    //     var clone = original.cloneNode(true);
+    //     clone.id = "new_qna";
+    //     clone.id = "new_qna" + ++i;
+    //     document.getElementById("add_here").appendChild(clone);
+        
+    // }
+    
+    </script>
+
+</body>
+
+</html>

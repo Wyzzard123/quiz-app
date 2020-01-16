@@ -5,19 +5,20 @@ Author: Wyz Kim-Chan
 
 Things to program:
 
-1. Web form to add questions and answers
-
-
 0. Database to store questions and answers
 1. Web Form to add questions and answers
 2. Web form to edit questions and answers
-3. Different kinds of questions
-4. A page that tells you what you got right and wrong
-5. Score Count (DONE with poc)
-6. User Accounts
+3. User Accounts
+4. Design/Templates
+
+-----DONE on 16/1/2020-----
+1. Webform to set topics, number of questions and number of choices per question.
 
 
+-----DONE on 15/1/2020-----
 
+1. Webform that generates quiz questions
+2. Webform that shows you your score and the questions-and-answers that you got right and wrong
 
 
 

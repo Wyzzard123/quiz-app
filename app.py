@@ -78,7 +78,7 @@ def quiz():
 
     
 @app.route('/quiz_settings', methods = ['GET', 'POST'])
-def topic():
+def quiz_settings():
     """Set topic, number of questions and number of choices for quiz."""
     if request.method == 'GET':
         infile = "question_answer_bank.json"
@@ -112,3 +112,53 @@ def topic():
 
             return render_template('quiz_new.html', mapped_questions = mapped_questions)   
             #TODO create new json file for different users
+
+@app.route('/quiz_add_questions', methods = ['GET', 'POST'])
+def quiz_add_questions():
+    """Add a new question."""
+    if request.method == 'GET':
+        infile = "question_answer_bank.json"
+
+        with open(infile) as json_file:
+            file_data = json.load(json_file)
+
+        topics = sorted(file_data.keys())
+        return render_template('quiz_add_questions.html', topics=topics) 
+    elif request.method == 'POST':
+        # Adds a new question and/or topics to the existing JSON file. 
+        
+        if request.form["add_new_questions"]:
+            new_questions = request.form.to_dict()
+            
+            if new_questions['topic'] == 'NEW_TOPIC':
+                new_topic = new_questions['add_new_topic']
+                new_question = new_questions['new_question']
+                new_answer = new_questions['new_answer']
+            else: 
+                new_topic = new_questions['topic'].lower()
+                new_question = new_questions['new_question']
+                new_answer = new_questions['new_answer']
+
+            infile = "question_answer_bank.json"
+            
+            with open(infile) as json_file:
+                file_data = json.load(json_file)
+            
+            question_answer_bank = get_questions(infile)
+
+            QA = namedtuple('QA', 'question answer')
+            question_answer_tuple = QA(question = new_question, answer = new_answer)
+            question_answer_bank[new_topic].append(question_answer_tuple)
+
+            store_json(question_answer_bank, infile)
+
+
+            
+
+
+            # To regenerate add_questions.html page
+            topics = sorted(file_data.keys())
+
+
+            return render_template('quiz_questions_added.html', topics=topics, new_topic=new_topic,new_question=new_question,new_answer=new_answer)
+        
