@@ -131,7 +131,7 @@ def quiz_add_questions():
             new_questions = request.form.to_dict()
             
             if new_questions['topic'] == 'NEW_TOPIC':
-                new_topic = new_questions['add_new_topic']
+                new_topic = new_questions['add_new_topic'].lower()
                 new_question = new_questions['new_question']
                 new_answer = new_questions['new_answer']
             else: 
@@ -154,9 +154,9 @@ def quiz_add_questions():
 
 
             
-
-
-            # To regenerate add_questions.html page
+            # To regenerate add_questions.html page with the new topic included
+            with open(infile) as json_file:
+                file_data = json.load(json_file)
             topics = sorted(file_data.keys())
 
 
