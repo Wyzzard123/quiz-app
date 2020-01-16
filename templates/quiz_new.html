@@ -5,7 +5,7 @@
     <title>Wyz's Quiz App</title>
 </head>
 <body>
-<h1>Quiz goes here</h1>
+<h1>Random Quiz Generator</h1>
     <form action='/quiz' method='POST'>
         <ol>
             {% for mapped_question in mapped_questions %}
@@ -25,6 +25,13 @@
             <br>
             <input type="submit" name="quiz_submit_button" value="Submit">
         </ol>
+    </form>
+    <form action='/quiz' method='GET'>
+        <input type="submit" name="generate_new_quiz_button" value="New Quiz">
+    </form>
+    <br><br>
+    <form action='/quiz_settings' method='GET'>
+        <input type="submit" name="new_settings" value="Quiz Settings">
     </form>
 </body>
 

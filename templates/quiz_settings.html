@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Wyz's Quiz App</title>
+</head>
+<body>
+<h1>Random Quiz Generator Settings</h1>
+    <form action='/quiz_settings' method='POST'>
+        
+        <label>
+            Topic
+        </label>
+        <br>
+        <select name="topic" required >
+            <option value="" selected disabled hidden>Select a Topic</option>
+            {% for topic in topics %}
+                <option value={{topic}}>{{topic | upper}}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label>
+            Number of Questions
+        </label>
+        <br>
+        <input type="number" name="no_of_questions" placeholder ="(Recommended: 5)" required>
+        <br><br>
+        <label>
+            Number of Choices
+        </label>
+        <br>
+        <input type="number" name = "no_of_choices" placeholder="(Recommended: 4)" min="1" required>
+        <br><br>
+        <input type="submit" name="quiz_topic_button" value="Generate Quiz">
+        
+    </form>
+    
+</body>
+
+</html>
