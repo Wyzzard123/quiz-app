@@ -23,10 +23,14 @@
         </label>
         <br>
         <select name="topic" required onchange="showNewTopic(this)">
-            <option value="" selected disabled hidden>Select a Topic</option>
+            <option value="" disabled hidden>Select a Topic</option>
             <option value="NEW_TOPIC">Create a New Topic</option>
             {% for topic in topics %}
-                <option value={{topic}}>{{topic | upper}}</option>
+                {% if topic == new_topic %}
+                    <option value={{topic}} selected>{{topic | upper}}</option>
+                {% else %}
+                    <option value={{topic}}>{{topic | upper}}</option>
+                {% endif %}
             {% endfor %}
         </select>
         
