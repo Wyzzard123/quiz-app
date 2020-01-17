@@ -3,6 +3,30 @@ Value Proposition:
 
 Author: Wyz Kim-Chan
 
+
+Plan:
+1. Implement logins
+2. Create database:
+a. Current Question Answer Bank needs to be imported and refactored.
+   -Example Document:
+   {
+        User: [(topic), (question), (answer)]
+   }
+b. Temporary Question Answer Bank will be for the individual user.
+c. We can also make quiz_settings in the database.
+d. Summary: Each user will have their own database with THREE collections, a Question_Answer_Bank AND a Temporary_Question_Answer_Bank AND quiz_settings.
+e. Initially, we will create just a COMMUNITY user, and implement the login later.
+  - User can be "COMMUNITY" which has all questions that everyone can access. We will import the JSON using this.
+
+
+
+Endgoal:
+1. Topic Settings need to be local to a session or to a particular user.
+2. New topics need to be added for a particular user only
+3. Data has to be persistent
+4. Later: Implement way to edit or remove questions.
+
+
 Things to program:
 
 0. Database to store questions and answers
@@ -10,7 +34,9 @@ Things to program:
 2. Web form to edit questions and answers
 3. User Accounts
 4. Design/Templates
-
+-----DONE on 17/1/2020-----
+1. Web Form to add questions and answers
+2. Design/Templates
 -----DONE on 16/1/2020-----
 1. Webform to set topics, number of questions and number of choices per question.
 
