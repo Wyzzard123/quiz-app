@@ -3,31 +3,71 @@
 
 <head>
     <title>Wyz's Quiz App</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <h1>Random Quiz Generator</h1>
     <form action='/quiz' method='GET'>
         <ol>
             {% for mapped_question in mapped_questions %}
+                {% set outer_loop = loop %}
                 <li>{{mapped_question['question']}}</li>
 
                 {% for choice in mapped_question %}
                     {% if choice != "question" %}
+                        {% if choice == chosen_answers_list[outer_loop.index0] and choice == correct_answers[outer_loop.index0].correct_a %}   
+                            <span style="color:green; font-weight: bold"> 
+                        {% elif choice != chosen_answers_list[outer_loop.index0] and choice == correct_answers[outer_loop.index0].correct_a %}   
+                            <span style="color:green; font-weight: bold; font-style:italic">
+
+                        {% elif choice == chosen_answers_list[outer_loop.index0] and choice != correct_answers[outer_loop.index0].correct_a %}    
+                            <span style="color:red"> 
+                        {% endif %}
+                        
                         {{choice}}: {{mapped_question[choice][0]}}
+                        </span>
                         <br>
                     {% endif %}
                 {% endfor %}
-                Your Answer: {{chosen_answers_list[loop.index0]}}<br>
-                Correct Answer: {{correct_answers[loop.index0].correct_a}}<br>
-                {{correct_or_wrong_list[loop.index0]}}<br><br>
+                {% if correct_or_wrong_list[loop.index0] == "Wrong!" or correct_or_wrong_list[loop.index0] == "No answer provided!" %}
+                    <span style="color:red">
+                        <span style ="font-weight:bold">{{correct_or_wrong_list[loop.index0]}}</span><br>
+                        
+                        Your Answer: {{chosen_answers_list[loop.index0]}}<br>
+                        
+                        Correct Answer: {{correct_answers[loop.index0].correct_a}}<br><br>
+                
+                
+                     </span>
+                {% else %}
+                    <span style="color:green">
+                        <span style ="font-weight:bold">{{correct_or_wrong_list[loop.index0]}}</span><br>
+                        Your Answer: {{chosen_answers_list[loop.index0]}}<br><br>
+                        </span>
+                {% endif %}
                 
             {% endfor %}
-            
+            {% if percentage_score >= 50 %}
+                <span style = "color: green; font-weight: bold">
+            {% else %}
+                <span style = "color: red; font-weight: bold">
+            {% endif %}
             Score: {{no_of_correct_answers}} / {{no_of_questions}} 
-            <br><br>
+            <br>
             Percentage: {{ percentage_score }} %
             <br><br>
-            <input type="submit" name="quiz_regenerate_button" value="New Quiz">
+            </span>
+            <input type="submit" name="quiz_regenerate_button" value="New Quiz" class="btn btn-primary mb-2">
         </ol>
     </form>
     <br><br>

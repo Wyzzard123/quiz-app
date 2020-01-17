@@ -3,10 +3,22 @@
 
 <head>
     <title>Wyz's Quiz App</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <h1>Random Quiz Generator Settings</h1>
     <form action='/quiz_settings' method='POST'>
+        
         
         <label>
             Topic
@@ -23,15 +35,15 @@
             Number of Questions
         </label>
         <br>
-        <input type="number" name="no_of_questions" placeholder ="(Recommended: 5)" required>
+        <input type="number" name="no_of_questions" placeholder ="(Recommended: 5)" required >
         <br><br>
         <label>
             Number of Choices
         </label>
         <br>
-        <input type="number" name = "no_of_choices" placeholder="(Recommended: 4)" min="1" required>
+        <input type="number" name = "no_of_choices" placeholder="(Recommended: 4)" min="1" required >
         <br><br>
-        <input type="submit" name="quiz_topic_button" value="Generate Quiz">
+        <input type="submit" name="quiz_topic_button" value="Generate Quiz" class="btn btn-primary mb-2">
         
     </form>
     <br>
