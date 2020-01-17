@@ -24,4 +24,6 @@ if __name__ == "__main__":
 
     pprint(list(collection_qna_bank.find({'topic':'colours'}, {'_id':0,'question':1, 'answer':1})))
     pprint(list(collection_settings.find()))
+
+    pprint((collection_qna_bank.distinct('topic', {'username': 'community'})))
    

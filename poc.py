@@ -3,6 +3,30 @@ from collections import namedtuple, defaultdict, deque
 import json
 import random
 
+from pymongo import MongoClient
+from pprint import pprint
+import os
+
+
+#LOAD DATABASE
+db_user = os.environ.get('QUIZDB_USER')
+
+db_password = os.environ.get('QUIZDB_PASSWORD')
+
+connection_string = f"mongodb+srv://{db_user}:{db_password}@quizapp1-phe85.mongodb.net/test?retryWrites=true&w=majority"
+
+client = MongoClient(connection_string)
+
+quiz_db = client.quiz_app
+
+collection_qna_bank = quiz_db.question_answer_bank
+
+collection_settings = quiz_db.quiz_settings
+
+collection_users = quiz_db.users
+
+collection_temp = quiz_db.temporary_qna_bank
+
 #########Section 1: CREATE QUESTION AND ANSWER BANK#######################################
 
 def store_json(question_answer_bank, outfile_json='question_answer_bank.json'):
@@ -208,6 +232,7 @@ def generate_mapped_questions_from_file(topic="nature", infile='question_answer_
 
 # print_questions(list_of_mapped_qna)
 
+
 def generate_quiz(list_of_mapped_qna):
     """Generates a quiz that takes user input for answers. The questions take the list_of_mapped_qna output from the generate_mapped_questions_from_file function as input. Similar to the print_questions function, but with pauses to allow for user input. Returns a score."""
     
@@ -292,3 +317,125 @@ def reload_questions_from_json(infile = 'temporary_question_answer_bank.json'):
         json_mapped_questions = json.load(json_file)
 
     return json_mapped_questions
+
+#####SECTION 4: Refactoring all code for MONGODB#######
+#TODO
+
+def get_questions_from_db(collection=collection_qna_bank, topic='nature', username='community'):
+    """Refactored for MongoDB: This reads questions and answers from the QnA Bank MongoDB database."""
+    question_answer_bank = defaultdict(lambda: [])
+    
+    qnacollection = list(collection.find({'username' : username, 'topic': topic},{'_id':0,'question':1, 'answer':1}))
+    
+    return qnacollection
+
+# print(get_questions_from_db())
+
+def generate_qna_from_db(collection = collection_qna_bank, topic = 'nature', username = 'community', no_of_questions = 5, no_of_choices = 4):
+    """Refactored for MongoDB: Generates a list of MCQ questions from the question_answer_bank JSON file for a particular topic and no_of_questions. The number of choices is set to 4 by default."""
+    question_answer_bank = get_questions_from_db(collection, topic, username)
+    
+    # Check that the number of questions is not more than the number of questions available for the given topic. If it is, update the number of questions accordingly.
+    if no_of_questions > len(question_answer_bank):
+        no_of_questions = len(question_answer_bank)
+
+    # Create a set of answers to generate choices from
+    set_of_answers = set(QA['answer'] for QA in question_answer_bank)
+    
+    # Also creating a list to make it easier to generate random choices later
+    list_of_answers = list(set_of_answers)
+
+    # If the number of choices is more than the answers we have available, lower the number of choices.
+    if no_of_choices > len(set_of_answers):
+        no_of_choices = len(set_of_answers)
+
+    # To be returned
+    list_of_qnc = []
+
+    # To keep track of to ensure we do not get the same question repeated
+    list_of_qa_pairs = []
+
+    for no in range(no_of_questions):
+        # Add a random QA tuple to the list of questions. The while loop checks that the QA pair has not already been inserted.
+        while (random_QA := random.choice(question_answer_bank)) in list_of_qa_pairs:
+            random_QA = random.choice(question_answer_bank)
+        list_of_qa_pairs.append(random_QA)
+        
+        # Create a named tuple with the question, answer, and a list of wrong choices
+        QNC = namedtuple("QNC", 'question answer incorrect_choices')
+        # Correct choice is index 0.
+        choices = deque([random_QA['answer']])
+
+        # Randomly generate incorrect choices
+        for num in range(no_of_choices - 1):
+            while (choice := random.choice(list_of_answers)) in choices:
+                choice = random.choice(list_of_answers)
+            choices.append(choice)
+        # Take out incorrect choice
+        choices.popleft()
+        incorrect_choices = list(choices)
+
+    
+        new_QNC = QNC(question=random_QA['question'], answer=random_QA['answer'], incorrect_choices = incorrect_choices)
+        list_of_qnc.append(new_QNC)
+    
+    return list_of_qnc
+
+# print(generate_qna_from_db())
+
+def generate_mapped_questions_from_db(collection = collection_qna_bank, topic = 'nature', username = 'community', no_of_questions = 5, no_of_choices = 4): 
+    
+    """Refactoring for MongoDB database: Generates a full list of questions and choices from a json file. Takes as parameters the file where the questions and answers are stored (JSON), the number of questions, the number of choices per question, and the topic.""" 
+
+    list_of_qnc = generate_qna_from_db(collection, topic, username, no_of_questions, no_of_choices)
+
+    # This is a list of the QnA to later be called by index number.
+    list_of_mapped_qna = []
+
+    for QNC_tuple in list_of_qnc:
+        choices_dict = map_to_choice(QNC_tuple)
+        list_of_mapped_qna.append(choices_dict)
+
+    return list_of_mapped_qna
+
+# print(generate_mapped_questions_from_db())
+
+def correct_answers_from_db(collection = collection_temp, username = "community"):
+    """Refactoring for MongoDB: Creates a list of tuples from a temporary mapped JSON with the questions and the correct answer choices.""" 
+
+    
+    db_mapped_questions = collection_temp.find_one({'username':username}, {'_id':0, 'username':0})
+    
+    list_of_q_and_correct_a = []
+
+    #QNCA is Question and Correct Answer
+    QNCA = namedtuple("QNCA", 'question correct_a')
+
+    for QNC in db_mapped_questions['temp_qna_bank']:
+        # print(QNC)
+        question = QNC["question"]
+        correct_answer = ""
+        for choice, answer in QNC.items():
+            if choice == "question":
+                continue
+            elif answer[1] == "wrong":
+                continue
+            elif answer[1] == "correct":
+                correct_answer = choice
+        q_and_correct_a = QNCA(question=question, correct_a=correct_answer)
+        
+        list_of_q_and_correct_a.append(q_and_correct_a)
+    
+    return list_of_q_and_correct_a
+
+## Uncomment to test remapping to correct answer choice/letter
+# print(correct_answers_from_json())
+
+def reload_questions_from_db(collection = collection_temp, username='community'):
+    """Reloads a temporary mapped JSON to recreate an HTML page with the same questions (after submission)."""
+
+    db_mapped_questions = collection_temp.find_one({'username': username}, {'_id':0, 'username':0})
+
+    return db_mapped_questions
+
+# print(reload_questions_from_db())

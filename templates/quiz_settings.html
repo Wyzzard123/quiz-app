@@ -51,6 +51,14 @@
     <form action='/quiz_add_questions' method='GET'>
         <input type="submit" name="add_questions" value="Add Questions">
     </form>
+    <br>
+    <form action='/logout' method='POST'>
+        <input type="submit" name="logout" value="Log Out">
+    </form>
+    <div>
+        <br>
+        Current User: {{username}}
+    </div>
     
 </body>
 

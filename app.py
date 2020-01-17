@@ -29,11 +29,13 @@ collection_settings = quiz_db.quiz_settings
 
 collection_users = quiz_db.users
 
-# @app.route('/error', methods = ['GET'])
-# def error():
-#     """Renders an error page."""
-    
-#     return render_template('error.html', errorstring = "Error")
+collection_temp = quiz_db.temporary_qna_bank
+
+@app.route('/error', methods = ['GET'])
+def error():
+    """Renders an error page."""
+    errorstring = session['error']
+    return render_template('error.html', errorstring = errorstring)
 
 # def error_page(errorstring):
 #     """Renders an error page."""
@@ -60,19 +62,45 @@ def login():
         matching_entry = (collection_users.find_one({'username':username}))
 
         if not matching_entry:
-            return render_template("error.html", errorstring = "No such user!")
+            session['error'] = "No such user!"
+            return redirect('/error')
 
         elif not pbkdf2_sha256.verify(password, matching_entry['password']):
-            print("invalid password")
             
-            return render_template("error.html", errorstring = "Invalid password")
+            session['error'] = "invalid password!"
+            return redirect('/error')
         elif pbkdf2_sha256.verify(password, matching_entry['password']):
             session['logged_in'] = True 
             session['user_id'] = username
-            print(session)
-            return redirect('/quiz_settings')
+            try:
+                if session['error']:
+                    del session['error']
+            except:
+                pass
 
 
+            if collection_settings.find_one({'username':username}) is None:
+                # To track whether there are any settings. Otherwise, hide the button which says "New Quiz (Last Used Settings)"
+                session['settings_set'] = False
+            else:
+                session['settings_set'] = True    
+            # Redirect to Quiz Settings if the person has any questions. Otherwise, redirect to add_questions instead.
+            if collection_qna_bank.find_one({'username':username}) is None:
+                # To track whether there are any questions such that we can generate a new quiz
+                session['questions'] = False
+                return redirect('/quiz_add_questions')
+            else:
+                session['questions'] = True
+                return redirect('/quiz_settings')
+
+            
+
+@app.route('/logout', methods = ['POST'])
+def logout():
+    if request.method == 'POST':
+        session.clear() 
+        return render_template('login.html')
+    
         
 
 @app.route('/register', methods = ['GET', 'POST'])
@@ -89,10 +117,12 @@ def register():
 
         if matching_entry:
             
-            return render_template("error.html", errorstring = "User already exists!")
+            session['error'] = "User already exists!"
+            return redirect('/error')
         else:
             collection_users.insert_one({'username': username, 
             'password': password_hash})
+
             return redirect('/login')
 
 @app.route('/quiz', methods = ['GET', 'POST'])
@@ -101,38 +131,30 @@ def quiz():
     if not session.get('logged_in'):
         return redirect('/login')
     else:
+        username = session['user_id']
         if request.method == 'GET':
             # If there is a settings page, go through "try"
             
-            try:
-                settings_file = "quiz_settings.json"
+ 
+            # print("\ntry\n")
+            settings = collection_settings.find_one({'username': username})
+            topic = settings['topic']
+            no_of_questions = int(settings['no_of_questions'])
+            no_of_choices = int(settings['no_of_choices'])
 
-                with open(settings_file, "r") as settingsfile:
-                    settings = json.load(settingsfile)
-                topic = settings['topic']
-                no_of_questions = int(settings['no_of_questions'])
-                no_of_choices = int(settings['no_of_choices'])
-
-                mapped_questions = generate_mapped_questions_from_file(topic=topic, infile="question_answer_bank.json", no_of_questions=no_of_questions, no_of_choices=no_of_choices)
-                
-                
-                temp_json_file = "temporary_question_answer_bank.json"
-
-                with open(temp_json_file, "w") as tempfile:
-                    json.dump(mapped_questions, tempfile)
-
-                return render_template('quiz_new.html', mapped_questions = mapped_questions)   
+            mapped_questions = generate_mapped_questions_from_db(collection = collection_qna_bank, topic=topic, username = username, no_of_questions=no_of_questions, no_of_choices=no_of_choices)
             
-            # Otherwise (eg if the website is accessed for the first time without going through the settings page), go through the default parameters in "except"
+            try:
+                # Delete the entry then insert
+                collection_temp.delete_one({"username":username})
             except:
-                mapped_questions = generate_mapped_questions_from_file(topic="nature", infile="question_answer_bank.json", no_of_questions=6, no_of_choices=4)
-                
-                temp_json_file = "temporary_question_answer_bank.json"
+                pass
+        
+            collection_temp.insert_one({"username": username, "temp_qna_bank" : mapped_questions})
 
-                with open(temp_json_file, "w") as tempfile:
-                    json.dump(mapped_questions, tempfile)
-
-                return render_template('quiz_new.html', mapped_questions = mapped_questions)
+            return render_template('quiz_new.html', mapped_questions = mapped_questions, username = username)   
+            
+            
         elif request.method == 'POST':
             if request.form["quiz_submit_button"]:
                 # Used to check what answers were given
@@ -141,8 +163,9 @@ def quiz():
                 # This will give "None" if there was no answer given for a particular index.
                 chosen_answers_list =[]
 
-                mapped_questions = reload_questions_from_json()
-                correct_answers = correct_answers_from_json()
+                mapped_questions = reload_questions_from_db(collection = collection_temp, username=username)['temp_qna_bank']
+
+                correct_answers = correct_answers_from_db(collection = collection_temp, username=username)
                 
                 # For scoring
                 no_of_correct_answers = 0
@@ -165,7 +188,7 @@ def quiz():
                         correct_or_wrong_list.append("No answer provided!")
                         chosen_answers_list.append("None")
                 percentage_score = round((no_of_correct_answers / no_of_questions) * 100, 2)
-                return render_template('quiz_submitted.html', mapped_questions = mapped_questions, correct_answers = correct_answers, no_of_correct_answers = no_of_correct_answers, no_of_questions = no_of_questions, correct_or_wrong_list = correct_or_wrong_list, chosen_answers = chosen_answers, chosen_answers_list=chosen_answers_list, percentage_score = percentage_score)
+                return render_template('quiz_submitted.html', mapped_questions = mapped_questions, correct_answers = correct_answers, no_of_correct_answers = no_of_correct_answers, no_of_questions = no_of_questions, correct_or_wrong_list = correct_or_wrong_list, chosen_answers = chosen_answers, chosen_answers_list=chosen_answers_list, percentage_score = percentage_score, username = username)
 
     
 @app.route('/quiz_settings', methods = ['GET', 'POST'])
@@ -174,14 +197,11 @@ def quiz_settings():
     if not session.get('logged_in'):
         return redirect('/login')
     else:
+        username = session['user_id']
         if request.method == 'GET':
-            infile = "question_answer_bank.json"
-
-            with open(infile) as json_file:
-                file_data = json.load(json_file)
-
-            topics = sorted(file_data.keys())
-            return render_template('quiz_settings.html', topics=topics) 
+            topics = sorted((collection_qna_bank.distinct('topic', {'username':username})))
+            
+            return render_template('quiz_settings.html', topics=topics, username = username) 
         elif request.method == 'POST':
             
             if request.form["quiz_topic_button"]:
@@ -191,20 +211,25 @@ def quiz_settings():
                 no_of_questions = int(settings['no_of_questions'])
                 no_of_choices = int(settings['no_of_choices'])
 
-                mapped_questions = generate_mapped_questions_from_file(topic=topic, infile="question_answer_bank.json", no_of_questions=no_of_questions, no_of_choices=no_of_choices)
+                mapped_questions = generate_mapped_questions_from_db(collection=collection_qna_bank, topic=topic, username = username, no_of_questions= no_of_questions, no_of_choices=no_of_choices)
                 
+                # collection_temp will be used as the temporary QnA bank for different users.
+                try:
+                    collection_temp.delete_one({"username":username})
+                except:
+                    pass
                 
-                temp_json_file = "temporary_question_answer_bank.json"
+                collection_temp.insert_one({"username":username, "temp_qna_bank": mapped_questions})
+                
+                try:
+                    collection_settings.delete_one({'username':username})
+                except:
+                    pass
 
-                with open(temp_json_file, "w") as tempfile:
-                    json.dump(mapped_questions, tempfile)
-
-                settings_file = "quiz_settings.json"
-
-                with open(settings_file, "w") as settingsfile:
-                    json.dump(settings, settingsfile)
-
-                return render_template('quiz_new.html', mapped_questions = mapped_questions)   
+                collection_settings.insert_one({'username':username, 'topic':topic, 'no_of_questions':no_of_questions, 'no_of_choices':no_of_choices})
+                
+                session['settings_set'] = True
+                return render_template('quiz_new.html', mapped_questions = mapped_questions, username = username)   
                 #TODO create new json file for different users
 
 @app.route('/quiz_add_questions', methods = ['GET', 'POST'])
@@ -213,14 +238,18 @@ def quiz_add_questions():
     if not session.get('logged_in'):
         return redirect('/login')
     else:
+        username = session['user_id']
         if request.method == 'GET':
-            infile = "question_answer_bank.json"
 
-            with open(infile) as json_file:
-                file_data = json.load(json_file)
+            topics = sorted((collection_qna_bank.distinct('topic', {'username':username})))
 
-            topics = sorted(file_data.keys())
-            return render_template('quiz_add_questions.html', topics=topics) 
+            if collection_settings.find_one({'username':username}) is None:
+                # To track whether there are any settings. Otherwise, hide the button which says "New Quiz (Last Used Settings)"
+                session['settings_set'] = False
+            else:
+                session['settings_set'] = True   
+
+            return render_template('quiz_add_questions.html', topics=topics, questions = session['questions'], settings= session['settings_set'],username = username) 
         elif request.method == 'POST':
             # Adds a new question and/or topics to the existing JSON file. 
             
@@ -236,26 +265,18 @@ def quiz_add_questions():
                     new_question = new_questions['new_question']
                     new_answer = new_questions['new_answer']
 
-                infile = "question_answer_bank.json"
-                
-                with open(infile) as json_file:
-                    file_data = json.load(json_file)
-                
-                question_answer_bank = get_questions(infile)
-
-                QA = namedtuple('QA', 'question answer')
-                question_answer_tuple = QA(question = new_question, answer = new_answer)
-                question_answer_bank[new_topic].append(question_answer_tuple)
-
-                store_json(question_answer_bank, infile)
-
-
-                
+                collection_qna_bank.insert_one({'username': username,'topic':new_topic, 'question':new_question, 'answer': new_answer})
+  
                 # To regenerate add_questions.html page with the new topic included
-                with open(infile) as json_file:
-                    file_data = json.load(json_file)
-                topics = sorted(file_data.keys())
+                topics = sorted((collection_qna_bank.distinct('topic', {'username':username})))
 
+                session['questions'] = True
 
-                return render_template('quiz_questions_added.html', topics=topics, new_topic=new_topic,new_question=new_question,new_answer=new_answer)
+                if collection_settings.find_one({'username':username}) is None:
+                # To track whether there are any settings. Otherwise, hide the button which says "New Quiz (Last Used Settings)"
+                    session['settings_set'] = False
+                else:
+                    session['settings_set'] = True    
+
+                return render_template('quiz_questions_added.html', topics=topics, new_topic=new_topic,new_question=new_question,new_answer=new_answer, questions = session['questions'], settings= session['settings_set'], username = username)
         

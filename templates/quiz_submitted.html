@@ -71,14 +71,22 @@
             <input type="submit" name="quiz_regenerate_button" value="New Quiz" class="btn btn-primary mb-2">
         </ol>
     </form>
-    <br><br>
+    <br>
     <form action='/quiz_settings' method='GET'>
         <input type="submit" name="new_settings" value="Quiz Settings">
     </form>
-    <br><br>
+    <br>
     <form action='/quiz_add_questions' method='GET'>
         <input type="submit" name="add_questions" value="Add Questions">
     </form>
+    <br>
+    <form action='/logout' method='POST'>
+        <input type="submit" name="logout" value="Log Out">
+    </form>
+    <div>
+        <br>
+        Current User: {{username}}
+    </div>
 </body>
 
 

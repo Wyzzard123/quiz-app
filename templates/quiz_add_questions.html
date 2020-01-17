@@ -64,10 +64,19 @@
         <input type="submit" name="new_settings" value="Quiz Settings" >
     </form>
     <br>
+    {% if settings == True and questions == True %}
     <form action='/quiz' method='GET'>
         <input type="submit" name="generate_new_quiz_button" value="New Quiz (Last Used Settings)">
     </form>
-    
+    {% endif %}
+    <br>
+    <form action='/logout' method='POST'>
+        <input type="submit" name="logout" value="Log Out">
+    </form>
+    <div>
+        <br>
+        Current User: {{username}}
+    </div>
 
     <script>
     function showNewTopic(that) {
