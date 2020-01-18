@@ -12,7 +12,7 @@
         <select name="topic" required >
             <option value="" selected disabled hidden>Select a Topic</option>
             {% for topic in topics %}
-                <option value={{topic}}>{{topic | upper}}</option>
+                <option value="{{topic}}">{{topic | upper}}</option>
             {% endfor %}
         </select>
         <br><br>
