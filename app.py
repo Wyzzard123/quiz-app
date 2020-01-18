@@ -9,8 +9,9 @@ from flask_talisman import Talisman
 
 app = Flask(__name__)
 
-# Use Talisman to force HTTPS. Comment this out if running locally.
-Talisman(app)
+# Use Talisman to force HTTPS. Comment this out if running locally. Currently this breaks the entire app, so we will turn it off for now.
+#TODO: Get Talisman to work.
+# Talisman(app)
 
 
 app.secret_key = os.environ.get('QUIZDB_SECRETKEY')
@@ -115,6 +116,11 @@ def register():
     elif request.method == 'POST':
         username = request.form['username'].lower()
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            session['error'] = "Passwords do not match!"
+            return redirect('/error')
 
         password_hash = pbkdf2_sha256.hash(password)
         
