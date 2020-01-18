@@ -25,6 +25,15 @@ To run the software, you will need Python 3.8.1, as the new walrus operator (":=
 
 You will also need to set three environment variables on your system, representing a MongoDB database key, a MongoDB password and a randomly generated secret key (for Flask sessions). You can also set these as config vars in Heroku.
 
+```
+db_user = os.environ.get('QUIZDB_USER')
+
+db_password = os.environ.get('QUIZDB_PASSWORD')
+
+app.secret_key = os.environ.get('QUIZDB_SECRETKEY')
+```
+
+
 Assuming you have pip installed, all other prerequisites can be installed using the following code:
 ```
 pip install -r requirements.txt
