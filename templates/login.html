@@ -1,23 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
+    {% block title %}
+    Log In/Register
+    {% endblock %}
+ {% block main %}
 
-<head>
-    <title>Wyz's Quiz App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-<h1>Log In</h1>
+ <h1>Log In</h1>
     <form action='/login' method='POST'>
         
         
@@ -35,12 +22,54 @@
         <br><br>
         
         <input type="submit" name="login_button" value="Log In" class="btn btn-primary mb-2">
+    </form>
+    <br>
+    <h1>Register</h1>
+    <form action='/register' method='POST'>
         
-    </form>
-    <form action='/register' method='GET'>
-        <input type="submit" name="register" value="Register">
-    </form>
-    
-</body>
+        
+        <label>
+            Create New Username
+        </label>
+        <br>
+        <input type="text" name="username" placeholder ="Username" required >
+        <br><br>
+        <label>
+            Create New Password
+        </label>
+        <br>
+        <input type="password" name="password" placeholder ="Password" required id = "new_password">
+        <br><br>
 
-</html>
+        <label>
+            Confirm Password
+        </label>
+        <br>
+        <input type="password" name="confirm_password" placeholder ="Confirm Password" id = "confirm_password" >
+        <br><br>
+        
+        <input type="submit" name="register" value="Register" class="btn btn-primary mb-2">
+        {% if new_account_created %}
+            <br><span style="color:green" >{{new_account_created}}</span>
+        {% endif %}
+
+    </form>
+
+    <script>
+        var password = document.getElementById("new_password"), confirm_password = document.getElementById("confirm_password");
+    
+        function validatePassword(){
+            if(password.value != confirm_password.value) {
+                confirm_password.setCustomValidity("Passwords do not match")
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+    
+        password.onchange = validatePassword;
+    
+        confirm_password.onkeyup = validatePassword
+    
+    </script>
+<!-- </div> -->
+{% endblock %}

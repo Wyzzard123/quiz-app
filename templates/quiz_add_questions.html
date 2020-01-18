@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-    <title>Wyz's Quiz App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-<h1>Add New Question</h1>
+{% block title%}
+Add New Questions/Topics
+{% endblock %}
+{% block main %}
+<h1>Add New Questions/Topics</h1>
     <form action='/quiz_add_questions' method='POST'>
         
         <label>
@@ -52,31 +40,9 @@
             <input type="text" name = "new_answer" placeholder="New Answer" required>
             
         </div>
-        <!-- <span id="add_here"></span> -->
         <br>
-        <!-- <input type="button" id="clone" onclick="add()" value="More Questions"></input button>
-        <br><br> -->
-
         <input type="submit" name="add_new_questions" value="Create Question" class="btn btn-primary mb-2">
     </form>
-    <br>
-    <form action='/quiz_settings' method='GET'>
-        <input type="submit" name="new_settings" value="Quiz Settings" >
-    </form>
-    <br>
-    {% if settings == True and questions == True %}
-    <form action='/quiz' method='GET'>
-        <input type="submit" name="generate_new_quiz_button" value="New Quiz (Last Used Settings)">
-    </form>
-    {% endif %}
-    <br>
-    <form action='/logout' method='POST'>
-        <input type="submit" name="logout" value="Log Out">
-    </form>
-    <div>
-        <br>
-        Current User: {{username}}
-    </div>
 
     <script>
     function showNewTopic(that) {
@@ -89,17 +55,6 @@
     var i = 0;
     var original = document.getElementById("new_qna")
 
-    // function add() {
-    //     //Create more new question spaces
-    //     var clone = original.cloneNode(true);
-    //     clone.id = "new_qna";
-    //     clone.id = "new_qna" + ++i;
-    //     document.getElementById("add_here").appendChild(clone);
-        
-    // }
-    
     </script>
 
-</body>
-
-</html>
+{% endblock %}

@@ -5,11 +5,13 @@ from pymongo import MongoClient
 from pprint import pprint
 import os
 from passlib.hash import pbkdf2_sha256
-# from flask_talisman import Talisman
+from flask_talisman import Talisman
 
 app = Flask(__name__)
-# Talisman(app)
-#TODO secure passwords
+
+# Use Talisman to force HTTPS. Comment this out if running locally.
+Talisman(app)
+
 
 app.secret_key = os.environ.get('QUIZDB_SECRETKEY')
 
@@ -52,12 +54,15 @@ def index():
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        try:
+            new_account_created = session['new_account_created']
+        except KeyError:
+            new_account_created = False
+        return render_template('login.html', new_account_created=new_account_created)
+        
     elif request.method == 'POST':
         username = request.form['username'].lower()
         password = request.form['password']
-
-        password_hash = pbkdf2_sha256.hash(password)
 
         matching_entry = (collection_users.find_one({'username':username}))
 
@@ -75,6 +80,7 @@ def login():
             try:
                 if session['error']:
                     del session['error']
+                    del session['new_account_created']
             except:
                 pass
 
@@ -95,18 +101,17 @@ def login():
 
             
 
-@app.route('/logout', methods = ['POST'])
+@app.route('/logout', methods = ['GET','POST'])
 def logout():
-    if request.method == 'POST':
-        session.clear() 
-        return render_template('login.html')
+    session.clear() 
+    return render_template('login.html')
     
         
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register.html')
+        return redirect('/login')
     elif request.method == 'POST':
         username = request.form['username'].lower()
         password = request.form['password']
@@ -122,6 +127,7 @@ def register():
         else:
             collection_users.insert_one({'username': username, 
             'password': password_hash})
+            session['new_account_created'] = f"New account, {username.upper()}, created! Proceed to log in!"
 
             return redirect('/login')
 

@@ -1,22 +1,9 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Wyz's Quiz App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
+{% extends "layout.html" %}
+    {% block title %}
+    Random Quiz Generator
+    {% endblock %}
+    
+{% block main %}
 <h1>Random Quiz Generator</h1>
     <form action='/quiz' method='GET'>
         <ol>
@@ -71,23 +58,5 @@
             <input type="submit" name="quiz_regenerate_button" value="New Quiz" class="btn btn-primary mb-2">
         </ol>
     </form>
-    <br>
-    <form action='/quiz_settings' method='GET'>
-        <input type="submit" name="new_settings" value="Quiz Settings">
-    </form>
-    <br>
-    <form action='/quiz_add_questions' method='GET'>
-        <input type="submit" name="add_questions" value="Add Questions">
-    </form>
-    <br>
-    <form action='/logout' method='POST'>
-        <input type="submit" name="logout" value="Log Out">
-    </form>
-    <div>
-        <br>
-        Current User: {{username}}
-    </div>
-</body>
-
-
-</html>
+        
+{% endblock %}
