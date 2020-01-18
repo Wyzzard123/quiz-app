@@ -16,9 +16,9 @@ Add New Questions/Topics
             <option value="NEW_TOPIC">Create a New Topic</option>
             {% for topic in topics %}
                 {% if topic == new_topic %}
-                    <option value={{topic}} selected>{{topic | upper}}</option>
+                    <option value="{{topic}}" selected>{{topic | upper}}</option>
                 {% else %}
-                    <option value={{topic}}>{{topic | upper}}</option>
+                    <option value="{{topic}}">{{topic | upper}}</option>
                 {% endif %}
             {% endfor %}
         </select>
