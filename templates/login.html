@@ -4,9 +4,9 @@
     {% endblock %}
  {% block main %}
 
- <h1>Log In</h1>
-    <form action='/login' method='POST'>
-        
+ 
+    <form action='/login' method='POST' style="float: left">
+        <h1>Log In</h1>
         
         <label>
             Username
@@ -24,9 +24,9 @@
         <input type="submit" name="login_button" value="Log In" class="btn btn-primary mb-2">
     </form>
     <br>
-    <h1>Register</h1>
-    <form action='/register' method='POST'>
-        
+    
+    <form action='/register' method='POST' style="float: right">
+        <h1>Register</h1>
         
         <label>
             Create New Username
@@ -54,6 +54,11 @@
         {% endif %}
 
     </form>
+{%endblock%}
+{% block center_aligned %} 
+    <p>
+        Log in or register to get started creating random quizzes for topics of your choice!
+    </p>
 
     <script>
         var password = document.getElementById("new_password"), confirm_password = document.getElementById("confirm_password");
@@ -71,5 +76,5 @@
         confirm_password.onkeyup = validatePassword
     
     </script>
-<!-- </div> -->
+
 {% endblock %}

@@ -28,7 +28,7 @@
                     {% endif %}
                 {% endfor %}
                 {% if correct_or_wrong_list[loop.index0] == "Wrong!" or correct_or_wrong_list[loop.index0] == "No answer provided!" %}
-                    <span style="color:red">
+                    <span style="color:red; text-align:center">
                         <span style ="font-weight:bold">{{correct_or_wrong_list[loop.index0]}}</span><br>
                         
                         Your Answer: {{chosen_answers_list[loop.index0]}}<br>
@@ -38,7 +38,7 @@
                 
                      </span>
                 {% else %}
-                    <span style="color:green">
+                    <span style="color:green; text-align:center">
                         <span style ="font-weight:bold">{{correct_or_wrong_list[loop.index0]}}</span><br>
                         Your Answer: {{chosen_answers_list[loop.index0]}}<br><br>
                         </span>
@@ -46,9 +46,9 @@
                 
             {% endfor %}
             {% if percentage_score >= 50 %}
-                <span style = "color: green; font-weight: bold">
+                <span style = "color: green; font-weight: bold; text-align:center">
             {% else %}
-                <span style = "color: red; font-weight: bold">
+                <span style = "color: red; font-weight: bold; text-align:center">
             {% endif %}
             Score: {{no_of_correct_answers}} / {{no_of_questions}} 
             <br>
@@ -60,3 +60,13 @@
     </form>
         
 {% endblock %}
+{% block center_aligned%}
+
+{% if (percentage_score >= 80) %}
+<p>Well done! But don't rest on your laurels!</p>
+{% elif (percentage_score >= 50) and (percentage_score <= 80) %}
+<p>Nice! But there's always room for improvement!</p>
+{% elif percentage_score < 50 %}
+<p>Keep going! If you're having a hard time, it only gets easier!</p>
+{% endif %}
+{%endblock%}

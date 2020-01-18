@@ -50,7 +50,7 @@ def index():
     if not session.get('logged_in'):
         return redirect('/login')
     else:
-        return redirect('/quiz_settings')
+        return redirect('/quiz_add_questions')
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -73,7 +73,7 @@ def login():
 
         elif not pbkdf2_sha256.verify(password, matching_entry['password']):
             
-            session['error'] = "invalid password!"
+            session['error'] = "Invalid password!"
             return redirect('/error')
         elif pbkdf2_sha256.verify(password, matching_entry['password']):
             session['logged_in'] = True 
@@ -267,7 +267,6 @@ def quiz_add_questions():
             
             if request.form["add_new_questions"]:
                 new_questions = request.form.to_dict()
-                
                 if new_questions['topic'] == 'NEW_TOPIC':
                     new_topic = new_questions['add_new_topic'].lower()
                     new_question = new_questions['new_question']

@@ -49,6 +49,8 @@ Add New Questions/Topics
 
         <input type="submit" name="add_new_questions" value="Create Question" class="btn btn-primary mb-2">
     </form>
+{%endblock%}
+{% block center_aligned %} 
     <span style="color: green">
     <br>
     Successfully Added a Question!<br><br>
@@ -56,6 +58,15 @@ Add New Questions/Topics
     Question: {{new_question}}<br>
     Answer: {{new_answer}}
     </span>
+    {%if session.questions == False %}
+        <p>Before we get started, you'll need to type some questions and answers for the random quiz generator to work! </p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == False %}
+        <p>If you're done here, head over to Quiz Settings to set the number of questions and choices! </p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == True %}
+        <p>If you're done here, feel free to head over to Quiz Settings to set the number of questions and choices, or just generate a quiz using your last-known settings by clicking Generate Quiz!</p>
+    {% endif %}
     <script>
     function showNewTopic(that) {
         if (that.value == "NEW_TOPIC") {

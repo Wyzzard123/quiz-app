@@ -26,7 +26,7 @@
         <!-- Latest compiled JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
-        <link href="/static/styles.css" rel="stylesheet">
+        <link href="static/styles.css" rel="stylesheet">
 
         <title>Wyz's Quiz App: {% block title %}{% endblock %}</title>
 
@@ -42,10 +42,15 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/quiz_add_questions">Add Questions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/quiz_add_questions">Add Questions/Topics</a></li>
+                        
+                        {%if session.questions == True %}
                         <li class="nav-item"><a class="nav-link" href="/quiz_settings">Quiz Settings</a></li>
+                        {%endif%}
+
                         {%if session.settings_set == True and session.questions == True %}
                         <li class="nav-item"><a class="nav-link" href="/quiz">Generate Quiz</a></li>
+                        
                         {%endif%}
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
@@ -61,13 +66,14 @@
 
         <main class=" 
         border-primary text-center" style="text-align: center">
-        <div style ="display: inline-block; text-align: left">
+        <div class="padded" style ="display: inline-block; text-align: left">
             {% block main %}{% endblock %}
         </div>
+        {% block center_aligned %} {% endblock %}
         </main>
         
         <footer class="small text-center text-muted">
-            View on Github at <a href="https://github.com/Wyzzard123/quiz-app">https://github.com/Wyzzard123/quiz-app</a>.
+            View repository on Github at <a href="https://github.com/Wyzzard123/quiz-app">https://github.com/Wyzzard123/quiz-app</a>.
         </footer>
 
     </body>

@@ -15,7 +15,7 @@ Add New Questions/Topics
             <option value="" selected disabled hidden>Select a Topic</option>
             <option value="NEW_TOPIC">Create a New Topic</option>
             {% for topic in topics %}
-                <option value={{topic}}>{{topic | upper}}</option>
+                <option value="{{topic}}">{{topic | upper}}</option>
             {% endfor %}
         </select>
         
@@ -38,11 +38,21 @@ Add New Questions/Topics
             </label>
             <br>
             <input type="text" name = "new_answer" placeholder="New Answer" required>
-            
         </div>
         <br>
         <input type="submit" name="add_new_questions" value="Create Question" class="btn btn-primary mb-2">
     </form>
+    {%endblock%}
+    {% block center_aligned %} 
+    {%if session.questions == False %}
+        <p>Before we get started, you'll need to type some questions and answers for the random quiz generator to work! </p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == False %}
+        <p>If you're done here, head over to Quiz Settings to set the number of questions and choices! </p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == True %}
+        <p>If you're done here, feel free to head over to Quiz Settings to set the number of questions and choices, or just generate a quiz using your last-known settings by clicking Generate Quiz!</p>
+    {% endif %}
 
     <script>
     function showNewTopic(that) {

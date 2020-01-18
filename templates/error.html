@@ -5,10 +5,83 @@
 
 {% block main %}
 <body>
-<h1>Error</h1>
-    {{errorstring}}
+    
+
+<h1>Log In</h1>
+<form action='/login' method='POST'>
+    
+    
+    <label>
+        Username
+    </label>
     <br>
+    <input type="text" name="username" placeholder ="Username" required >
+    <br><br>
+    <label>
+        Password
+    </label>
     <br>
+    <input type="password" name="password" placeholder ="Password" required >
+    <br><br>
+    
+    <input type="submit" name="login_button" value="Log In" class="btn btn-primary mb-2">
+</form>
+<br>
+<h1>Register</h1>
+<form action='/register' method='POST'>
+    
+    
+    <label>
+        Create New Username
+    </label>
+    <br>
+    <input type="text" name="username" placeholder ="Username" required >
+    <br><br>
+    <label>
+        Create New Password
+    </label>
+    <br>
+    <input type="password" name="password" placeholder ="Password" required id = "new_password">
+    <br><br>
+
+    <label>
+        Confirm Password
+    </label>
+    <br>
+    <input type="password" name="confirm_password" placeholder ="Confirm Password" id = "confirm_password" >
+    <br><br>
+    
+    <input type="submit" name="register" value="Register" class="btn btn-primary mb-2">
+    {% if new_account_created %}
+        <br><span style="color:green" >{{new_account_created}}</span>
+    {% endif %}
+    <br><p><span style="color:red">{{errorstring}} </span></p>
+</form>
+{%endblock%}
+{% block center_aligned %} 
+
+
+
+<p>
+    Log in or register to get started creating random quizzes for topics of your choice!
+</p>
+
+<script>
+    var password = document.getElementById("new_password"), confirm_password = document.getElementById("confirm_password");
+
+    function validatePassword(){
+        if(password.value != confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords do not match")
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+
+    confirm_password.onkeyup = validatePassword
+
+</script>
 
     
 {% endblock %}

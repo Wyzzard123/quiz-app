@@ -29,3 +29,11 @@ main img
     /* constrain images on small screens */
     max-width: 100%;
 }
+
+body
+{
+    padding-top: 25 px;
+    padding-right: 25 px;
+    padding-bottom: 25 px;
+    padding-left: 25 px
+}

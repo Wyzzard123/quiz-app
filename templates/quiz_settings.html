@@ -31,4 +31,15 @@
         <input type="submit" name="quiz_topic_button" value="Generate Quiz" class="btn btn-primary mb-2">
         
     </form>
+{%endblock%}
+{% block center_aligned %} 
+    {%if session.questions == False %}
+        <p>Before we get started, you'll need to create some topics and type in some questions and answers for the random quiz generator to work! Head over there first by clicking on Add Questions/Topics!</p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == False %}
+        <p>Just set the topic as well as the number of questions and answers, and you're all set to generate a quiz! Remember, the more questions and answers you add, the more random the quizzes will be! If the numbers you set are too high, we'll automatically scale it back for you to the maximum number of choices or questions possible for a given topic.</p>
+    {% endif %}
+    {%if session.questions == True and session.settings_set == True %}
+        <p>If you want, you can just generate a quiz using your last-known settings by clicking Generate Quiz at the top!</p>
+    {% endif %}
 {% endblock %}}
