@@ -275,8 +275,21 @@ def quiz_add_questions():
                     new_topic = new_questions['topic'].lower()
                     new_question = new_questions['new_question']
                     new_answer = new_questions['new_answer']
+                # Check if question is the same as any in the database for a given topic. If so, prevent this and say unsuccessful.
 
-                collection_qna_bank.insert_one({'username': username,'topic':new_topic, 'question':new_question, 'answer': new_answer})
+                if (previous_qna := collection_qna_bank.find_one({'username': username, 'topic': new_topic})) is not None:
+                    previous_topic = previous_qna['topic']
+                    previous_question = previous_qna['question']
+                    previous_answer = previous_qna['answer']
+                    question_added = False
+                else:
+                    question_added = True
+                    collection_qna_bank.insert_one({'username': username,'topic':new_topic, 'question':new_question, 'answer': new_answer})
+
+                    # To prevent errors when passing these variables to the template
+                    previous_topic = None
+                    previous_question = None
+                    previous_answer = None
   
                 # To regenerate add_questions.html page with the new topic included
                 topics = sorted((collection_qna_bank.distinct('topic', {'username':username})))
@@ -289,5 +302,5 @@ def quiz_add_questions():
                 else:
                     session['settings_set'] = True    
 
-                return render_template('quiz_questions_added.html', topics=topics, new_topic=new_topic,new_question=new_question,new_answer=new_answer, questions = session['questions'], settings= session['settings_set'], username = username)
+                return render_template('quiz_questions_added.html', topics=topics, new_topic=new_topic,new_question=new_question,new_answer=new_answer, questions = session['questions'], settings= session['settings_set'], username = username, question_added = question_added, previous_topic = previous_topic, previous_question = previous_question, previous_answer=previous_answer)
         

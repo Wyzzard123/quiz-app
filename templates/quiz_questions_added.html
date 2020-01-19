@@ -51,13 +51,31 @@ Add New Questions/Topics
     </form>
 {%endblock%}
 {% block center_aligned %} 
-    <span style="color: green">
-    <br>
-    Successfully Added a Question!<br><br>
-    Topic: {{new_topic | upper}}<br>
-    Question: {{new_question}}<br>
-    Answer: {{new_answer}}
-    </span>
+    {% if question_added == True %}
+        <span style="color: green">
+        <br>
+        Successfully Added a Question!<br><br>
+        Topic: {{new_topic | upper}}<br>
+        Question: {{new_question}}<br>
+        Answer: {{new_answer}}
+        </span>
+    {% elif question_added == False %}
+        <span style="color: red">
+        <br>
+        Adding Question Failed!<br><br>
+        
+        You tried to add:
+        Topic: {{new_topic | upper}}<br>
+        Question: {{new_question}}<br>
+        Answer: {{new_answer}}<br><br>
+
+        But you previously had the same question:
+        Previous Topic: {{previous_topic | upper}}<br>
+        Previous Question: {{previous_question}}<br>
+        Previous Answer: {{previous_answer}}<br><br>
+
+        </span>
+    {% endif %}
     {%if session.questions == False %}
         <p>Before we get started, you'll need to type some questions and answers for the random quiz generator to work! </p>
     {% endif %}
