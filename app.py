@@ -277,7 +277,7 @@ def quiz_add_questions():
                     new_answer = new_questions['new_answer']
                 # Check if question is the same as any in the database for a given topic. If so, prevent this and say unsuccessful.
 
-                if (previous_qna := collection_qna_bank.find_one({'username': username, 'topic': new_topic})) is not None:
+                if (previous_qna := collection_qna_bank.find_one({'username': username, 'topic': new_topic, 'question': new_question})) is not None:
                     previous_topic = previous_qna['topic']
                     previous_question = previous_qna['question']
                     previous_answer = previous_qna['answer']
